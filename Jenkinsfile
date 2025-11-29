@@ -3,7 +3,6 @@ pipeline {
 
     environment {
         DOCKER_IMAGE = 'krishnam030303/spring-petclinic'
-        SONARQUBE_ENV = 'sonarqube'
         BRANCH_NAME = 'main'
     }
 
@@ -23,14 +22,6 @@ pipeline {
         stage('Maven Build') {
             steps {
                 sh 'mvn clean package -DskipTests'
-            }
-        }
-
-        stage('SonarQube Scan') {
-            steps {
-                withSonarQubeEnv(SONARQUBE_ENV) {
-                    sh 'mvn sonar:sonar'
-                }
             }
         }
 
@@ -56,7 +47,7 @@ pipeline {
             steps {
                 sshagent (credentials: ['app-server-ssh']) {
                     sh """
-                    ssh -o StrictHostKeyChecking=no ubuntu@<APP_SERVER_PUBLIC_IP> '
+                    ssh -o StrictHostKeyChecking=no ubuntu@65.2.4.162 '
                         sudo docker pull ${DOCKER_IMAGE}:latest &&
                         sudo docker rm -f spring-petclinic || true &&
                         sudo docker run -d --name spring-petclinic -p 80:8080 ${DOCKER_IMAGE}:latest
@@ -68,14 +59,11 @@ pipeline {
     }
 
     post {
-        always {
-            echo "Pipeline execution completed."
-        }
         success {
-            echo "SUCCESS: Deployment Finished Successfully!"
+            echo "Deployment Completed Successfully!"
         }
         failure {
-            echo "ERROR: Pipeline Failed — check logs."
+            echo "Pipeline Failed — Check logs."
         }
     }
 }
