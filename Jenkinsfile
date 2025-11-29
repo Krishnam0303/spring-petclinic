@@ -15,7 +15,7 @@ pipeline {
 
         stage('Checkout Code') {
             steps {
-                git branch: BRANCH_NAME, url: 'https://github.com/Krishnam030303/spring-petclinic.git'
+                git branch: BRANCH_NAME, url: 'https://github.com/Krishnam0303/spring-petclinic.git'
             }
         }
 
